@@ -3,136 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <title>Word and Image Study</title>
-
-  <!-- jsPsych 7 core -->
-  <script src="https://unpkg.com/jspsych@7.3.4/jspsych.js"></script>
-  <link  href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css" rel="stylesheet">
-
-  <!-- plugins we need -->
-  <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3/dist/index.browser.min.js"></script>
-  <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.3/dist/index.browser.min.js"></script>
-  <script src="https://unpkg.com/@jspsych/plugin-survey-likert@1.1.3/dist/index.browser.min.js"></script>
-  <link  href="https://unpkg.com/@jspsych/plugin-survey-likert@1.1.3/dist/index.browser.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/jspsych@7.3.4/jspsych.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/jspsych@7.3.4/css/jspsych.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@jspsych/plugin-html-keyboard-response@1.1.3/dist/index.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@jspsych/plugin-preload@1.1.3/dist/index.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@jspsych/plugin-survey-likert@1.1.3/dist/index.browser.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/@jspsych/plugin-survey-likert@1.1.3/dist/index.browser.min.css" rel="stylesheet">
 
   <style>
-    /* ── general layout ── */
     body { background: #f5f5f5; }
+    .jspsych-content { max-width: 820px; font-family: Arial, sans-serif; font-size: 18px; }
 
-    .jspsych-content {
-      max-width: 820px;
-      font-family: Arial, sans-serif;
-      font-size: 18px;
-    }
-
-    /* ── IAT stimulus box ── */
     #iat-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       min-height: 420px;
     }
-
-    /* category labels at top corners */
     #label-bar {
-      width: 100%;
-      display: flex;
+      width: 100%; display: flex;
       justify-content: space-between;
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 24px;
+      font-size: 20px; font-weight: bold; margin-bottom: 24px;
     }
     #label-left  { color: #1a5c9e; text-align: left;  width: 45%; }
     #label-right { color: #1a5c9e; text-align: right; width: 45%; }
 
-    /* the stimulus itself */
     #iat-stimulus {
-      font-size: 36px;
-      font-weight: bold;
-      color: #222;
-      margin: 10px 0 20px 0;
-      min-height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      font-size: 36px; font-weight: bold; color: #222;
+      margin: 10px 0 20px 0; min-height: 80px;
+      display: flex; align-items: center; justify-content: center;
     }
     #iat-stimulus img {
-      max-height: 220px;
-      max-width: 380px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      max-height: 220px; max-width: 380px;
+      border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
+    #key-reminder { font-size: 15px; color: #555; margin-top: 12px; }
+    #error-msg { color: red; font-size: 22px; font-weight: bold; min-height: 32px; margin-top: 8px; }
 
-    /* key reminder */
-    #key-reminder {
-      font-size: 15px;
-      color: #555;
-      margin-top: 12px;
-    }
-
-    /* error flash */
-    #error-msg {
-      color: red;
-      font-size: 22px;
-      font-weight: bold;
-      min-height: 32px;
-      margin-top: 8px;
-    }
-
-    /* instruction screens */
     .instr-box {
-      background: #fff;
-      border-radius: 10px;
-      padding: 36px 44px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      background: #fff; border-radius: 10px;
+      padding: 36px 44px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);
       line-height: 1.7;
     }
     .instr-box h2 { color: #1a5c9e; margin-top: 0; }
-    .instr-box .key-eg {
-      display: inline-block;
-      background: #e8eef7;
-      border-radius: 5px;
-      padding: 2px 10px;
-      font-weight: bold;
-      font-family: monospace;
-    }
-    .instr-box .big-press {
-      font-size: 22px;
-      font-weight: bold;
-      color: #1a5c9e;
-      margin: 18px 0 8px 0;
+    .key-eg {
+      display: inline-block; background: #e8eef7;
+      border-radius: 5px; padding: 2px 10px;
+      font-weight: bold; font-family: monospace;
     }
   </style>
 </head>
-
 <body>
 <script>
-/* ================================================================
-   CONFIGURATION — edit this section to match your study
-   ================================================================ */
 
-// ── 1. Prolific redirect URL (replace with your actual URL) ──────
+// ── CONFIGURATION ────────────────────────────────────────────────
 const PROLIFIC_REDIRECT = "https://app.prolific.com/submissions/complete?cc=YOUR_CODE_HERE";
 
-// ── 2. Image paths (upload your images to the repo first) ────────
-//    Format: { id, src, label, type }
-//    type: "mixed" = culturally mixed;  "nonmixed" = non-mixed
 const IMAGES = [
-  // Culturally mixed
-  { id:"img_m1", src:"images/mixed_jacket.jpg",   label:"Mixed Jacket",  type:"mixed" },
-  { id:"img_m2", src:"images/mixed_burger.jpg",   label:"Mixed Burger",  type:"mixed" },
-  { id:"img_m3", src:"images/mixed_watch.jpg",    label:"Mixed Watch",   type:"mixed" },
-  { id:"img_m4", src:"images/mixed_teacup.jpg",   label:"Mixed Teacup",  type:"mixed" },
-  { id:"img_m5", src:"images/mixed_bag.jpg",      label:"Mixed Bag",     type:"mixed" },
-  // Non-mixed
-  { id:"img_n1", src:"images/plain_jacket.jpg",   label:"Plain Jacket",  type:"nonmixed" },
-  { id:"img_n2", src:"images/plain_burger.jpg",   label:"Plain Burger",  type:"nonmixed" },
-  { id:"img_n3", src:"images/plain_watch.jpg",    label:"Plain Watch",   type:"nonmixed" },
-  { id:"img_n4", src:"images/plain_teacup.jpg",   label:"Plain Teacup",  type:"nonmixed" },
-  { id:"img_n5", src:"images/plain_bag.jpg",      label:"Plain Bag",     type:"nonmixed" },
+  { id:"img_m1", src:"images/mixed_jacket.jpg",   type:"mixed" },
+  { id:"img_m2", src:"images/mixed_burger.jpg",   type:"mixed" },
+  { id:"img_m3", src:"images/mixed_watch.jpg",    type:"mixed" },
+  { id:"img_m4", src:"images/mixed_teacup.jpg",   type:"mixed" },
+  { id:"img_m5", src:"images/mixed_bag.jpg",      type:"mixed" },
+  { id:"img_n1", src:"images/plain_jacket.jpg",   type:"nonmixed" },
+  { id:"img_n2", src:"images/plain_burger.jpg",   type:"nonmixed" },
+  { id:"img_n3", src:"images/plain_watch.jpg",    type:"nonmixed" },
+  { id:"img_n4", src:"images/plain_teacup.jpg",   type:"nonmixed" },
+  { id:"img_n5", src:"images/plain_bag.jpg",      type:"nonmixed" },
 ];
 
-// ── 3. Attribute words ───────────────────────────────────────────
 const WORDS_CYCLIC = [
   { id:"w_c1", text:"cycle"     },
   { id:"w_c2", text:"recurring" },
@@ -148,29 +86,10 @@ const WORDS_LINEAR = [
   { id:"w_l5", text:"sequential"    },
 ];
 
-// ── 4. Keys ──────────────────────────────────────────────────────
-const KEY_LEFT  = "e";   // left-hand response
-const KEY_RIGHT = "i";   // right-hand response
+const KEY_LEFT  = "e";
+const KEY_RIGHT = "i";
 
-/* ================================================================
-   BLOCK DEFINITIONS  (standard 7-block IAT)
-   Block 1 : practice images only  (mixed=left, nonmixed=right)
-   Block 2 : practice words only   (cyclic=left, linear=right)
-   Block 3 : combined TEST          (mixed+cyclic=left, nonmixed+linear=right)  20 trials
-   Block 4 : practice images only  (reversed: mixed=right, nonmixed=left)
-   Block 5 : combined TEST          (mixed+linear=left, nonmixed+cyclic=right)  40 trials (reversed)
-   Block 6 : combined (reversed)  extra practice 20 trials
-   Block 7 : combined TEST (reversed) 40 trials
-   We counterbalance order of blocks 3 and 5 across participants.
-   ================================================================ */
-
-// Counterbalance: even participant number → congruent first; odd → incongruent first
-const participantID = Date.now(); // simple proxy; replace with Prolific ID if available
-const congruentFirst = (Math.floor(participantID / 1000) % 2 === 0);
-
-/* ================================================================
-   HELPER: shuffle array
-   ================================================================ */
+// ── HELPERS ──────────────────────────────────────────────────────
 function shuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -180,416 +99,325 @@ function shuffle(arr) {
   return a;
 }
 
-/* ================================================================
-   HELPER: build stimulus HTML for one IAT trial
-   ================================================================ */
-function buildIATScreen(leftLabel, rightLabel, stimulus, isImage) {
-  const stimHTML = isImage
-    ? `<img src="${stimulus.src}" alt="${stimulus.label}">`
+function iatScreen(leftTop, leftSub, rightTop, rightSub, stimulus) {
+  const isImg = stimulus.src !== undefined;
+  const stimHTML = isImg
+    ? `<img src="${stimulus.src}" alt="product">`
     : `<span>${stimulus.text}</span>`;
-
   return `
     <div id="iat-box">
       <div id="label-bar">
-        <div id="label-left">${leftLabel}<br><small style="font-weight:normal;font-size:14px;">press <b>${KEY_LEFT.toUpperCase()}</b></small></div>
-        <div id="label-right">${rightLabel}<br><small style="font-weight:normal;font-size:14px;">press <b>${KEY_RIGHT.toUpperCase()}</b></small></div>
+        <div id="label-left">
+          ${leftTop}<br>
+          <small style="font-size:14px;font-weight:normal">${leftSub}</small><br>
+          <small style="font-size:13px;color:#888">press <b>${KEY_LEFT.toUpperCase()}</b></small>
+        </div>
+        <div id="label-right">
+          ${rightTop}<br>
+          <small style="font-size:14px;font-weight:normal">${rightSub}</small><br>
+          <small style="font-size:13px;color:#888">press <b>${KEY_RIGHT.toUpperCase()}</b></small>
+        </div>
       </div>
       <div id="iat-stimulus">${stimHTML}</div>
       <div id="error-msg"></div>
-      <div id="key-reminder">Press <b>${KEY_LEFT.toUpperCase()}</b> or <b>${KEY_RIGHT.toUpperCase()}</b></div>
+      <div id="key-reminder">Respond as fast as you can</div>
     </div>`;
 }
 
-/* ================================================================
-   HELPER: single IAT trial (with error feedback)
-   ================================================================ */
-function makeIATTrial(leftLabel, rightLabel, stimulus, correctKey, blockNum, trialType) {
-  const isImage = stimulus.src !== undefined;
+function makeTrial(leftTop, leftSub, rightTop, rightSub, stimulus, correctKey, blockNum, trialType) {
   return {
     type: jsPsychHtmlKeyboardResponse,
-    stimulus: buildIATScreen(leftLabel, rightLabel, stimulus, isImage),
+    stimulus: iatScreen(leftTop, leftSub, rightTop, rightSub, stimulus),
     choices: [KEY_LEFT, KEY_RIGHT],
-    response_ends_trial: false,   // we handle this manually
+    response_ends_trial: false,
+    data: { block: blockNum, trial_type_iat: trialType,
+            stimulus_id: stimulus.id, correct_key: correctKey,
+            is_image: stimulus.src !== undefined },
     on_load: function() {
-      const errorDiv = document.getElementById("error-msg");
-      let responded = false;
-      let rt_start = performance.now();
-
-      document.addEventListener("keydown", function handler(e) {
-        const key = e.key.toLowerCase();
-        if (key !== KEY_LEFT && key !== KEY_RIGHT) return;
-        if (responded) return;
-
-        const rt = performance.now() - rt_start;
-
-        if (key !== correctKey) {
-          // show error, wait for correct key
-          errorDiv.textContent = "✗  Please press the correct key";
+      const errDiv = document.getElementById("error-msg");
+      let done = false;
+      const t0 = performance.now();
+      function handler(e) {
+        const k = e.key.toLowerCase();
+        if (k !== KEY_LEFT && k !== KEY_RIGHT) return;
+        if (done) return;
+        const rt = performance.now() - t0;
+        if (k !== correctKey) {
+          errDiv.textContent = "✗  Wrong key — please press the correct key";
+          jsPsych.getCurrentTrial().data.error = true;
         } else {
-          responded = true;
+          done = true;
           document.removeEventListener("keydown", handler);
-          // store data
-          jsPsych.getCurrentTrial().data = {
-            block: blockNum,
-            trial_type_iat: trialType,
-            stimulus_id: isImage ? stimulus.id : stimulus.id,
-            stimulus_type: isImage ? stimulus.type : (WORDS_CYCLIC.find(w=>w.id===stimulus.id) ? "cyclic" : "linear"),
-            correct_key: correctKey,
-            error: errorDiv.textContent !== "",
-            rt: rt,
-          };
+          jsPsych.getCurrentTrial().data.rt = rt;
+          jsPsych.getCurrentTrial().data.error =
+            jsPsych.getCurrentTrial().data.error || false;
           jsPsych.finishTrial();
         }
-      });
+      }
+      document.addEventListener("keydown", handler);
     },
-    data: {},
   };
 }
 
-/* ================================================================
-   HELPER: build a combined block
-   ================================================================ */
-function buildBlock(blockNum, mixedIsLeft, nTrials,
-                    imagesLeft, imagesRight, wordsLeft, wordsRight) {
+function buildCombinedBlock(blockNum, mixedLeft, nTrials) {
+  const LT = mixedLeft ? "Culturally Mixed"   : "Non-Mixed";
+  const LS = mixedLeft ? "— or — Cyclical Time" : "— or — Cyclical Time";
+  const RT = mixedLeft ? "Non-Mixed"           : "Culturally Mixed";
+  const RS = mixedLeft ? "— or — Linear Time"  : "— or — Linear Time";
 
-  const leftLabel  = mixedIsLeft
-    ? "Culturally Mixed<br>— OR —<br>Cyclical Time"
-    : "Non-Mixed<br>— OR —<br>Cyclical Time";
-  const rightLabel = mixedIsLeft
-    ? "Non-Mixed<br>— OR —<br>Linear Time"
-    : "Culturally Mixed<br>— OR —<br>Linear Time";
+  const imgLeft  = IMAGES.filter(i => mixedLeft ? i.type==="mixed" : i.type==="nonmixed");
+  const imgRight = IMAGES.filter(i => mixedLeft ? i.type==="nonmixed" : i.type==="mixed");
 
-  // Build pool of trials (repeat to reach nTrials)
-  let pool = [];
-  const allLeft  = [...imagesLeft.map(s=>({s, k:KEY_LEFT})),
-                    ...wordsLeft.map(s=>({s, k:KEY_LEFT}))];
-  const allRight = [...imagesRight.map(s=>({s, k:KEY_RIGHT})),
-                    ...wordsRight.map(s=>({s, k:KEY_RIGHT}))];
+  const pool = shuffle([
+    ...imgLeft.map(s  => ({ s, k: KEY_LEFT  })),
+    ...imgRight.map(s => ({ s, k: KEY_RIGHT })),
+    ...WORDS_CYCLIC.map(s => ({ s, k: KEY_LEFT  })),
+    ...WORDS_LINEAR.map(s => ({ s, k: KEY_RIGHT })),
+  ]);
 
-  // fill to nTrials evenly
-  while (pool.length < nTrials) {
-    pool.push(...allLeft, ...allRight);
-  }
-  pool = shuffle(pool).slice(0, nTrials);
-
-  return pool.map(({s, k}) =>
-    makeIATTrial(leftLabel, rightLabel, s, k, blockNum, mixedIsLeft ? "congruent" : "incongruent")
-  );
+  const extended = [];
+  while (extended.length < nTrials) extended.push(...pool);
+  return shuffle(extended).slice(0, nTrials)
+    .map(({s, k}) => makeTrial(LT, LS, RT, RS, s, k, blockNum,
+                               mixedLeft ? "congruent" : "incongruent"));
 }
 
-/* ================================================================
-   BUILD FULL TIMELINE
-   ================================================================ */
+// ── INIT ─────────────────────────────────────────────────────────
 const jsPsych = initJsPsych({
   on_finish: function() {
-    // Save data then redirect
-    const data = jsPsych.data.get().csv();
-    // In production connect to a backend or DataPipe; for now we log
-    console.log(data);
+    // ---- save data via DataPipe (optional — add your pipeline ID below) ----
+    // const data = jsPsych.data.get().csv();
+    // fetch("https://pipe.jspsych.org/api/data", { method:"POST", ... });
+    console.log(jsPsych.data.get().csv());
     window.location.href = PROLIFIC_REDIRECT;
   }
 });
 
-const timeline = [];
+const tl = [];
 
-// ── PRELOAD ──────────────────────────────────────────────────────
-timeline.push({
-  type: jsPsychPreload,
-  images: IMAGES.map(i => i.src),
-});
+// preload
+tl.push({ type: jsPsychPreload, images: IMAGES.map(i => i.src) });
 
-// ── WELCOME ──────────────────────────────────────────────────────
-timeline.push({
+// counterbalance: congruent-first vs incongruent-first
+const congruentFirst = Math.random() < 0.5;
+
+// ── BLOCK 1: image practice (20 trials) ──────────────────────────
+tl.push({
   type: jsPsychHtmlKeyboardResponse,
-  stimulus: `
-    <div class="instr-box">
-      <h2>Welcome</h2>
-      <p>This study examines how people associate images and words.</p>
-      <p>You will complete a series of categorisation tasks using two keys:</p>
-      <p class="big-press">
-        <span class="key-eg">E</span> — left-side category &nbsp;&nbsp;
-        <span class="key-eg">I</span> — right-side category
-      </p>
-      <p>Please respond as <b>quickly and accurately</b> as possible.<br>
-         If you press the wrong key, an error message will appear — press the correct key to continue.</p>
-      <p>The study takes approximately <b>10–12 minutes</b>.</p>
-      <p style="color:#888;font-size:15px;">Press any key to begin.</p>
-    </div>`,
   choices: "ALL_KEYS",
+  stimulus: `<div class="instr-box">
+    <h2>Block 1 of 7 — Image Practice</h2>
+    <p>You will see <b>product images</b> one at a time.</p>
+    <p>Press <span class="key-eg">E</span> if the image shows a <b>Culturally Mixed</b> product.<br>
+       Press <span class="key-eg">I</span> if the image shows a <b>Non-Mixed</b> product.</p>
+    <p style="color:#888;font-size:15px">Press any key to begin.</p>
+  </div>`
 });
-
-// ── BLOCK 1: Image practice (20 trials) ──────────────────────────
-const mixedImages    = IMAGES.filter(i => i.type === "mixed");
-const nonmixedImages = IMAGES.filter(i => i.type === "nonmixed");
-
-timeline.push({
-  type: jsPsychHtmlKeyboardResponse,
-  stimulus: `
-    <div class="instr-box">
-      <h2>Block 1 of 7 — Image Practice</h2>
-      <p>You will see <b>product images</b> one at a time.</p>
-      <p>Press <span class="key-eg">E</span> if the image shows a <b>Culturally Mixed</b> product.<br>
-         Press <span class="key-eg">I</span> if the image shows a <b>Non-Mixed</b> product.</p>
-      <p style="color:#888;font-size:15px;">Press any key to start.</p>
-    </div>`,
-  choices: "ALL_KEYS",
-});
-
-const block1Images = shuffle([
-  ...mixedImages.map(s=>({s, k:KEY_LEFT})),
-  ...nonmixedImages.map(s=>({s, k:KEY_RIGHT})),
-  ...mixedImages.map(s=>({s, k:KEY_LEFT})),
-  ...nonmixedImages.map(s=>({s, k:KEY_RIGHT})),
+const b1pool = shuffle([
+  ...IMAGES.filter(i=>i.type==="mixed").map(s=>({s,k:KEY_LEFT})),
+  ...IMAGES.filter(i=>i.type==="nonmixed").map(s=>({s,k:KEY_RIGHT})),
+  ...IMAGES.filter(i=>i.type==="mixed").map(s=>({s,k:KEY_LEFT})),
+  ...IMAGES.filter(i=>i.type==="nonmixed").map(s=>({s,k:KEY_RIGHT})),
 ]).slice(0,20);
+b1pool.forEach(({s,k}) => tl.push(
+  makeTrial("Culturally Mixed","","Non-Mixed","",s,k,1,"img_practice")
+));
 
-block1Images.forEach(({s, k}) => {
-  timeline.push(makeIATTrial(
-    "Culturally Mixed", "Non-Mixed", s, k, 1, "image_practice"
-  ));
-});
-
-// ── BLOCK 2: Word practice (20 trials) ───────────────────────────
-timeline.push({
+// ── BLOCK 2: word practice (20 trials) ───────────────────────────
+tl.push({
   type: jsPsychHtmlKeyboardResponse,
-  stimulus: `
-    <div class="instr-box">
-      <h2>Block 2 of 7 — Word Practice</h2>
-      <p>You will see <b>words</b> one at a time.</p>
-      <p>Press <span class="key-eg">E</span> for <b>Cyclical Time</b> words
-         (time as cycles, recurrence, return).<br>
-         Press <span class="key-eg">I</span> for <b>Linear Time</b> words
-         (time moving forward in one direction).</p>
-      <p style="color:#888;font-size:15px;">Press any key to start.</p>
-    </div>`,
   choices: "ALL_KEYS",
+  stimulus: `<div class="instr-box">
+    <h2>Block 2 of 7 — Word Practice</h2>
+    <p>You will see <b>words</b> one at a time.</p>
+    <p>Press <span class="key-eg">E</span> for <b>Cyclical Time</b> words
+       (time as cycles, recurrence, return).<br>
+       Press <span class="key-eg">I</span> for <b>Linear Time</b> words
+       (time moving forward in one direction).</p>
+    <p style="color:#888;font-size:15px">Press any key to begin.</p>
+  </div>`
 });
-
-const block2Words = shuffle([
-  ...WORDS_CYCLIC.map(s=>({s, k:KEY_LEFT})),
-  ...WORDS_LINEAR.map(s=>({s, k:KEY_RIGHT})),
-  ...WORDS_CYCLIC.map(s=>({s, k:KEY_LEFT})),
-  ...WORDS_LINEAR.map(s=>({s, k:KEY_RIGHT})),
+const b2pool = shuffle([
+  ...WORDS_CYCLIC.map(s=>({s,k:KEY_LEFT})),
+  ...WORDS_LINEAR.map(s=>({s,k:KEY_RIGHT})),
+  ...WORDS_CYCLIC.map(s=>({s,k:KEY_LEFT})),
+  ...WORDS_LINEAR.map(s=>({s,k:KEY_RIGHT})),
 ]).slice(0,20);
+b2pool.forEach(({s,k}) => tl.push(
+  makeTrial("Cyclical Time","","Linear Time","",s,k,2,"word_practice")
+));
 
-block2Words.forEach(({s, k}) => {
-  timeline.push(makeIATTrial(
-    "Cyclical Time", "Linear Time", s, k, 2, "word_practice"
+// ── BLOCKS 3–7 with counterbalancing ─────────────────────────────
+function instrBlock(num, title, leftTop, leftSub, rightTop, rightSub, extra) {
+  return {
+    type: jsPsychHtmlKeyboardResponse,
+    choices: "ALL_KEYS",
+    stimulus: `<div class="instr-box">
+      <h2>Block ${num} of 7 — ${title}</h2>
+      ${extra || ""}
+      <p>Press <span class="key-eg">E</span> for <b>${leftTop}</b>${leftSub ? " "+leftSub : ""}.<br>
+         Press <span class="key-eg">I</span> for <b>${rightTop}</b>${rightSub ? " "+rightSub : ""}.</p>
+      <p style="color:#888;font-size:15px">Press any key to begin.</p>
+    </div>`
+  };
+}
+
+// Block 3 = 20-trial combined practice
+// Block 4 = 20-trial image reversal practice
+// Block 5 = 20-trial combined practice (reversed)
+// Block 6 = 40-trial combined test
+// Block 7 = 40-trial combined test (same pairing as 6)
+
+function addCongruentFirst() {
+  // Block 3: mixed+cyclic = left
+  tl.push(instrBlock(3,"Combined Practice",
+    "Culturally Mixed","or Cyclical Time",
+    "Non-Mixed","or Linear Time"));
+  tl.push(...buildCombinedBlock(3, true, 20));
+
+  // Block 4: image reversal
+  tl.push(instrBlock(4,"Image Reversal Practice",
+    "Non-Mixed","","Culturally Mixed","",
+    "<p>⚠️ The image categories have <b>switched sides</b>.</p>"));
+  const b4pool = shuffle([
+    ...IMAGES.filter(i=>i.type==="nonmixed").map(s=>({s,k:KEY_LEFT})),
+    ...IMAGES.filter(i=>i.type==="mixed").map(s=>({s,k:KEY_RIGHT})),
+    ...IMAGES.filter(i=>i.type==="nonmixed").map(s=>({s,k:KEY_LEFT})),
+    ...IMAGES.filter(i=>i.type==="mixed").map(s=>({s,k:KEY_RIGHT})),
+  ]).slice(0,20);
+  b4pool.forEach(({s,k}) => tl.push(
+    makeTrial("Non-Mixed","","Culturally Mixed","",s,k,4,"img_reversal")
   ));
-});
 
-// ── BLOCKS 3 & 5 (counterbalanced) ───────────────────────────────
-function makeBlock3() {
-  // Mixed + Cyclic = LEFT; NonMixed + Linear = RIGHT  (congruent)
-  return [
-    {
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: `
-        <div class="instr-box">
-          <h2>Block 3 of 7 — Combined Practice</h2>
-          <p>Now <b>images and words</b> will appear together.</p>
-          <p>Press <span class="key-eg">E</span> for:
-             <b>Culturally Mixed</b> images &nbsp;OR&nbsp; <b>Cyclical Time</b> words.<br>
-             Press <span class="key-eg">I</span> for:
-             <b>Non-Mixed</b> images &nbsp;OR&nbsp; <b>Linear Time</b> words.</p>
-          <p style="color:#888;font-size:15px;">Press any key to start.</p>
-        </div>`,
-      choices: "ALL_KEYS",
-    },
-    ...buildBlock(3, true, 20,
-      mixedImages, nonmixedImages,
-      WORDS_CYCLIC, WORDS_LINEAR),
-  ];
+  // Block 5: non-mixed+cyclic = left (incongruent)
+  tl.push(instrBlock(5,"Reversed Combined Practice",
+    "Non-Mixed","or Cyclical Time",
+    "Culturally Mixed","or Linear Time",
+    "<p>⚠️ The image categories have <b>switched sides</b>.</p>"));
+  tl.push(...buildCombinedBlock(5, false, 20));
+
+  // Block 6 & 7: incongruent test (40 trials each)
+  tl.push(instrBlock(6,"Combined Test",
+    "Non-Mixed","or Cyclical Time",
+    "Culturally Mixed","or Linear Time"));
+  tl.push(...buildCombinedBlock(6, false, 40));
+
+  tl.push(instrBlock(7,"Final Test",
+    "Non-Mixed","or Cyclical Time",
+    "Culturally Mixed","or Linear Time"));
+  tl.push(...buildCombinedBlock(7, false, 40));
 }
 
-function makeBlock5() {
-  // Mixed + Linear = LEFT; NonMixed + Cyclic = RIGHT  (incongruent)
-  return [
-    {
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: `
-        <div class="instr-box">
-          <h2>Block 5 of 7 — Reversed Practice</h2>
-          <p>The image categories have <b>switched sides</b>.</p>
-          <p>Press <span class="key-eg">E</span> for:
-             <b>Non-Mixed</b> images &nbsp;OR&nbsp; <b>Cyclical Time</b> words.<br>
-             Press <span class="key-eg">I</span> for:
-             <b>Culturally Mixed</b> images &nbsp;OR&nbsp; <b>Linear Time</b> words.</p>
-          <p style="color:#888;font-size:15px;">Press any key to start.</p>
-        </div>`,
-      choices: "ALL_KEYS",
-    },
-    ...buildBlock(5, false, 20,
-      nonmixedImages, mixedImages,
-      WORDS_CYCLIC, WORDS_LINEAR),
-  ];
+function addIncongruentFirst() {
+  // Block 3: non-mixed+cyclic = left (incongruent first)
+  tl.push(instrBlock(3,"Combined Practice",
+    "Non-Mixed","or Cyclical Time",
+    "Culturally Mixed","or Linear Time"));
+  tl.push(...buildCombinedBlock(3, false, 20));
+
+  // Block 4: image reversal back to mixed=left
+  tl.push(instrBlock(4,"Image Reversal Practice",
+    "Culturally Mixed","","Non-Mixed","",
+    "<p>⚠️ The image categories have <b>switched sides</b>.</p>"));
+  const b4pool = shuffle([
+    ...IMAGES.filter(i=>i.type==="mixed").map(s=>({s,k:KEY_LEFT})),
+    ...IMAGES.filter(i=>i.type==="nonmixed").map(s=>({s,k:KEY_RIGHT})),
+    ...IMAGES.filter(i=>i.type==="mixed").map(s=>({s,k:KEY_LEFT})),
+    ...IMAGES.filter(i=>i.type==="nonmixed").map(s=>({s,k:KEY_RIGHT})),
+  ]).slice(0,20);
+  b4pool.forEach(({s,k}) => tl.push(
+    makeTrial("Culturally Mixed","","Non-Mixed","",s,k,4,"img_reversal")
+  ));
+
+  // Block 5: mixed+cyclic = left (congruent)
+  tl.push(instrBlock(5,"Reversed Combined Practice",
+    "Culturally Mixed","or Cyclical Time",
+    "Non-Mixed","or Linear Time",
+    "<p>⚠️ The image categories have <b>switched sides</b>.</p>"));
+  tl.push(...buildCombinedBlock(5, true, 20));
+
+  // Block 6 & 7: congruent test (40 trials each)
+  tl.push(instrBlock(6,"Combined Test",
+    "Culturally Mixed","or Cyclical Time",
+    "Non-Mixed","or Linear Time"));
+  tl.push(...buildCombinedBlock(6, true, 40));
+
+  tl.push(instrBlock(7,"Final Test",
+    "Culturally Mixed","or Cyclical Time",
+    "Non-Mixed","or Linear Time"));
+  tl.push(...buildCombinedBlock(7, true, 40));
 }
 
-// Block 4 — image reversal practice
-function makeBlock4() {
-  return [
-    {
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: `
-        <div class="instr-box">
-          <h2>Block 4 of 7 — Image Reversal Practice</h2>
-          <p>The image categories have <b>switched sides</b>.</p>
-          <p>Press <span class="key-eg">E</span> for <b>Non-Mixed</b> images.<br>
-             Press <span class="key-eg">I</span> for <b>Culturally Mixed</b> images.</p>
-          <p style="color:#888;font-size:15px;">Press any key to start.</p>
-        </div>`,
-      choices: "ALL_KEYS",
-    },
-    ...shuffle([
-      ...nonmixedImages.map(s=>({s, k:KEY_LEFT})),
-      ...mixedImages.map(s=>({s, k:KEY_RIGHT})),
-      ...nonmixedImages.map(s=>({s, k:KEY_LEFT})),
-      ...mixedImages.map(s=>({s, k:KEY_RIGHT})),
-    ]).slice(0,20).map(({s,k}) =>
-      makeIATTrial("Non-Mixed", "Culturally Mixed", s, k, 4, "image_reversal")
-    ),
-  ];
-}
-
-// Blocks 6 & 7 — test blocks (40 trials each)
-function makeBlock6(mixedIsLeft) {
-  const instrText = mixedIsLeft
-    ? `Press <span class="key-eg">E</span> for <b>Culturally Mixed</b> OR <b>Cyclical Time</b>.<br>
-       Press <span class="key-eg">I</span> for <b>Non-Mixed</b> OR <b>Linear Time</b>.`
-    : `Press <span class="key-eg">E</span> for <b>Non-Mixed</b> OR <b>Cyclical Time</b>.<br>
-       Press <span class="key-eg">I</span> for <b>Culturally Mixed</b> OR <b>Linear Time</b>.`;
-  return [
-    {
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: `
-        <div class="instr-box">
-          <h2>Block 6 of 7 — Combined Test</h2>
-          <p>${instrText}</p>
-          <p style="color:#888;font-size:15px;">Press any key to start.</p>
-        </div>`,
-      choices: "ALL_KEYS",
-    },
-    ...buildBlock(6, mixedIsLeft, 40,
-      mixedIsLeft ? mixedImages    : nonmixedImages,
-      mixedIsLeft ? nonmixedImages : mixedImages,
-      WORDS_CYCLIC, WORDS_LINEAR),
-  ];
-}
-
-function makeBlock7(mixedIsLeft) {
-  const instrText = mixedIsLeft
-    ? `Press <span class="key-eg">E</span> for <b>Culturally Mixed</b> OR <b>Cyclical Time</b>.<br>
-       Press <span class="key-eg">I</span> for <b>Non-Mixed</b> OR <b>Linear Time</b>.`
-    : `Press <span class="key-eg">E</span> for <b>Non-Mixed</b> OR <b>Cyclical Time</b>.<br>
-       Press <span class="key-eg">I</span> for <b>Culturally Mixed</b> OR <b>Linear Time</b>.`;
-  return [
-    {
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: `
-        <div class="instr-box">
-          <h2>Block 7 of 7 — Final Test</h2>
-          <p>${instrText}</p>
-          <p style="color:#888;font-size:15px;">Press any key to start.</p>
-        </div>`,
-      choices: "ALL_KEYS",
-    },
-    ...buildBlock(7, mixedIsLeft, 40,
-      mixedIsLeft ? mixedImages    : nonmixedImages,
-      mixedIsLeft ? nonmixedImages : mixedImages,
-      WORDS_CYCLIC, WORDS_LINEAR),
-  ];
-}
-
-// Assemble blocks 3–7 with counterbalancing
 if (congruentFirst) {
-  // congruent (mixed+cyclic=left) first
-  timeline.push(...makeBlock3());
-  timeline.push(...makeBlock4());
-  timeline.push(...makeBlock5());
-  timeline.push(...makeBlock6(false));
-  timeline.push(...makeBlock7(false));
+  addCongruentFirst();
 } else {
-  // incongruent first
-  timeline.push(...makeBlock5());
-  timeline.push(...makeBlock4());
-  timeline.push(...makeBlock3());
-  timeline.push(...makeBlock6(true));
-  timeline.push(...makeBlock7(true));
+  addIncongruentFirst();
 }
 
-// ── POST-IAT FAMILIARITY CHECK ────────────────────────────────────
-timeline.push({
+// ── POST-IAT: familiarity control variable ────────────────────────
+tl.push({
   type: jsPsychHtmlKeyboardResponse,
-  stimulus: `
-    <div class="instr-box">
-      <h2>Almost done!</h2>
-      <p>You have completed the main task.</p>
-      <p>Please answer a few brief questions about the products you saw.</p>
-      <p style="color:#888;font-size:15px;">Press any key to continue.</p>
-    </div>`,
   choices: "ALL_KEYS",
+  stimulus: `<div class="instr-box">
+    <h2>Almost done!</h2>
+    <p>Please answer a few brief questions.</p>
+    <p style="color:#888;font-size:15px">Press any key to continue.</p>
+  </div>`
 });
 
-// Familiarity with products (control variable)
-timeline.push({
+tl.push({
   type: jsPsychSurveyLikert,
   questions: [
     {
-      prompt: "How familiar were you with the <b>products</b> shown in this study?",
-      labels: ["1<br>Not at all familiar","2","3","4","5","6","7<br>Extremely familiar"],
-      required: true,
-      name: "familiarity_products",
+      prompt: "How familiar were you with the <b>cultural elements</b> shown in the product images?",
+      labels: ["1<br>Not at all","2","3","4","5","6","7<br>Extremely"],
+      required: true, name: "familiarity_culture"
     },
     {
-      prompt: "How familiar were you with the <b>cultural elements</b> shown in the products?",
-      labels: ["1<br>Not at all familiar","2","3","4","5","6","7<br>Extremely familiar"],
-      required: true,
-      name: "familiarity_culture",
+      prompt: "How familiar were you with the <b>product types</b> shown in this study?",
+      labels: ["1<br>Not at all","2","3","4","5","6","7<br>Extremely"],
+      required: true, name: "familiarity_products"
     },
   ],
-  data: { trial_type_iat: "familiarity" },
+  data: { trial_type_iat: "familiarity" }
 });
 
 // ── DEMOGRAPHICS ──────────────────────────────────────────────────
-timeline.push({
+tl.push({
   type: jsPsychSurveyLikert,
   questions: [
     {
-      prompt: "Your age:",
+      prompt: "Your age group:",
       labels: ["18–24","25–34","35–44","45–54","55–64","65+"],
-      required: true,
-      name: "age",
+      required: true, name: "age"
     },
     {
       prompt: "Your gender:",
-      labels: ["Male","Female","Non-binary","Prefer not to say"],
-      required: true,
-      name: "gender",
+      labels: ["Male","Female","Non-binary / third gender","Prefer not to say"],
+      required: true, name: "gender"
     },
     {
-      prompt: "Have you ever lived in or spent significant time (6+ months) in an East Asian country?",
+      prompt: "Have you ever lived in an East Asian country for 6 months or more?",
       labels: ["No","Yes"],
-      required: true,
-      name: "east_asia_experience",
+      required: true, name: "east_asia_exp"
     },
   ],
-  data: { trial_type_iat: "demographics" },
+  data: { trial_type_iat: "demographics" }
 });
 
-// ── END SCREEN ────────────────────────────────────────────────────
-timeline.push({
+// ── END ───────────────────────────────────────────────────────────
+tl.push({
   type: jsPsychHtmlKeyboardResponse,
-  stimulus: `
-    <div class="instr-box">
-      <h2>Thank you!</h2>
-      <p>You have completed the study.</p>
-      <p>You will now be redirected to Prolific to confirm your submission.</p>
-      <p style="color:#888;font-size:15px;">Press any key to continue.</p>
-    </div>`,
   choices: "ALL_KEYS",
+  stimulus: `<div class="instr-box">
+    <h2>Thank you!</h2>
+    <p>You have completed the study.</p>
+    <p>You will now be redirected to Prolific to confirm your submission.</p>
+    <p style="color:#888;font-size:15px">Press any key to continue.</p>
+  </div>`
 });
 
-// ── RUN ───────────────────────────────────────────────────────────
-jsPsych.run(timeline);
+jsPsych.run(tl);
 </script>
 </body>
 </html>
